@@ -36,9 +36,7 @@ namespace ManzanasDelCuidado.Controllers
                             {
                                 codigoMunc = Convert.ToInt32(rd["CodigoMunc"]),
                                 Nombre = rd["Nombre"].ToString()
-
                             });
-
                         }
                     }
                 }
