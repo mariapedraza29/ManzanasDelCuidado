@@ -8,10 +8,10 @@ namespace ManzanasDelCuidado.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MujeresController : ControllerBase
+    public class ServiciosController : ControllerBase
     {
         private readonly string cadenaSql;
-        public MujeresController(IConfiguration config)
+        public ServiciosController(IConfiguration config)
         {
             cadenaSql = config.GetConnectionString("CadenaSQL");
         }
@@ -20,28 +20,25 @@ namespace ManzanasDelCuidado.Controllers
         [Route("Listar")]
         public IActionResult listar()
         {
-            List<Mujeres> lista = new List<Mujeres>();
+            List<Servicios> lista = new List<Servicios>();
             try
             {
                 using (var conexion = new SqlConnection(cadenaSql))
                 {
                     conexion.Open();
-                    var cmd = new SqlCommand("sp_ListarMujeres", conexion);
-                    cmd.CommandType =CommandType.StoredProcedure;
+                    var cmd = new SqlCommand("sp_ListarServicios", conexion);
+                    cmd.CommandType = CommandType.StoredProcedure;
                     using (var rd = cmd.ExecuteReader())
                     {
                         while (rd.Read())
                         {
-                            lista.Add(new Mujeres
+                            lista.Add(new Servicios
                             {
-                                DocMujeres = Convert.ToInt32(rd["CodigoMunc"]),
-                                nombres = rd["Nombre"].ToString(),
-                                apellidos = rd["apellidos"].ToString(),
-                                correo = rd["correo"].ToString(),
-                                ocupacion = rd["ocupacion"].ToString(),
-                                telefono = rd["telefono"].ToString(),
+                                codigoServ = Convert.ToInt32(rd["codigoServ"]),
+                                nombre = rd["nombre"].ToString(),
+                                localidad = rd["localidad"].ToString(),
                                 direccion = rd["direccion"].ToString(),
-                                foto = Convert.ToByte(rd["foto"])
+                                fkCodigoMunc = Convert.ToInt32(rd["fkCodigoMunc"])
 
                             });
 
@@ -58,38 +55,35 @@ namespace ManzanasDelCuidado.Controllers
         }
         [HttpGet]
         [Route("Obtener/{DocMujeres:int}")]
-        public IActionResult obtener(int DocMujeres)
+        public IActionResult obtener(int codigoServ)
         {
-            List<Mujeres> lista = new List<Mujeres>();
-            Mujeres mujeres = new Mujeres();
+            List<Servicios> lista = new List<Servicios>();
+            Servicios mujeres = new Servicios();
             try
             {
                 using (var conexion = new SqlConnection(cadenaSql))
                 {
                     conexion.Open();
-                    var cmd = new SqlCommand("sp_ListarMujeres", conexion);
+                    var cmd = new SqlCommand("sp_ListarServicios", conexion);
                     cmd.CommandType = CommandType.StoredProcedure;
                     using (var rd = cmd.ExecuteReader())
                     {
                         while (rd.Read())
                         {
-                            lista.Add(new Mujeres
+                            lista.Add(new Servicios
                             {
-                                DocMujeres = Convert.ToInt32(rd["DocMujeres"]),
-                                nombres = rd["Nombre"].ToString(),
-                                apellidos = rd["apellidos"].ToString(),
-                                correo = rd["correo"].ToString(),
-                                ocupacion = rd["ocupacion"].ToString(),
-                                telefono = rd["telefono"].ToString(),
+                                codigoServ = Convert.ToInt32(rd["codigoServ"]),
+                                nombre = rd["nombre"].ToString(),
+                                localidad = rd["localidad"].ToString(),
                                 direccion = rd["direccion"].ToString(),
-                                foto = Convert.ToByte(rd["foto"])
+                                fkCodigoMunc = Convert.ToInt32(rd["fkCodigoMunc"])
 
                             });
 
                         }
                     }
                 }
-                mujeres = lista.Where(item => item.DocMujeres == DocMujeres).FirstOrDefault();
+                mujeres = lista.Where(item => item.codigoServ == codigoServ).FirstOrDefault();
                 return StatusCode(StatusCodes.Status200OK, new { mensaje = "ok", Response = mujeres });
 
             }
@@ -100,7 +94,7 @@ namespace ManzanasDelCuidado.Controllers
         }
         [HttpPost]
         [Route("registrar")]
-        public IActionResult Registrar([FromBody] Mujeres objeto)
+        public IActionResult Registrar([FromBody] Servicios objeto)
         {
             try
             {
@@ -109,18 +103,15 @@ namespace ManzanasDelCuidado.Controllers
                     conexion.Open();
                     var cmd = new SqlCommand("sp_registrarMujeres", conexion);
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("codigoMunc", objeto.DocMujeres);
-                    cmd.Parameters.AddWithValue("nombres", objeto.nombres);
-                    cmd.Parameters.AddWithValue("apellidos", objeto.apellidos);
-                    cmd.Parameters.AddWithValue("correo", objeto.correo);
-                    cmd.Parameters.AddWithValue("ocupacion", objeto.ocupacion);
-                    cmd.Parameters.AddWithValue("telefono", objeto.telefono);
+                    cmd.Parameters.AddWithValue("codigoMunc", objeto.codigoServ);
+                    cmd.Parameters.AddWithValue("nombre", objeto.nombre);
+                    cmd.Parameters.AddWithValue("localidad", objeto.localidad);
                     cmd.Parameters.AddWithValue("direccion", objeto.direccion);
-                    cmd.Parameters.AddWithValue("foto", objeto.foto);
+                    cmd.Parameters.AddWithValue("fkCodigoMunc", objeto.fkCodigoMunc);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.ExecuteNonQuery();
                 }
-                return StatusCode(StatusCodes.Status200OK, new { mensaje = "El usuario ha sido registrado" });
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = "El Servicio ha sido registrado" });
             }
             catch (Exception error)
             {
@@ -129,26 +120,24 @@ namespace ManzanasDelCuidado.Controllers
         }
         [HttpPut]
         [Route("Editar")]
-        public IActionResult Editar([FromBody] Mujeres objeto)
+        public IActionResult Editar([FromBody] Servicios objeto)
         {
             try
             {
                 using (var conexion = new SqlConnection(cadenaSql))
                 {
                     conexion.Open();
-                    var cmd = new SqlCommand("sp_actualizarMujeres", conexion);
+                    var cmd = new SqlCommand("sp_actualizarServicios", conexion);
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("codigoMunc", objeto.DocMujeres == 0 ? DBNull.Value : objeto.DocMujeres);
-                    cmd.Parameters.AddWithValue("nombres", objeto.nombres is null ? DBNull.Value : objeto.nombres);
-                    cmd.Parameters.AddWithValue("apellidos", objeto.apellidos is null ? DBNull.Value : objeto.apellidos);
-                    cmd.Parameters.AddWithValue("correo", objeto.correo is null ? DBNull.Value : objeto.correo);
-                    cmd.Parameters.AddWithValue("ocupacion", objeto.ocupacion is null ? DBNull.Value : objeto.ocupacion);
-                    cmd.Parameters.AddWithValue("telefono", objeto.telefono is null ? DBNull.Value : objeto.telefono);
+                    cmd.Parameters.AddWithValue("codigoMunc", objeto.codigoServ == 0 ? DBNull.Value : objeto.codigoServ);
+                    cmd.Parameters.AddWithValue("nombre", objeto.nombre is null ? DBNull.Value : objeto.nombre);
+                    cmd.Parameters.AddWithValue("localidad", objeto.localidad is null ? DBNull.Value : objeto.localidad);
                     cmd.Parameters.AddWithValue("direccion", objeto.direccion is null ? DBNull.Value : objeto.direccion);
+                    cmd.Parameters.AddWithValue("fkCodigoMunc", objeto.fkCodigoMunc == 0 ? DBNull.Value : objeto.fkCodigoMunc);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.ExecuteNonQuery();
                 }
-                return StatusCode(StatusCodes.Status200OK, new { mensaje = "El usuario ha sido actualizado" });
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = "El Servicio ha sido actualizado" });
             }
             catch (Exception error)
             {
@@ -157,27 +146,25 @@ namespace ManzanasDelCuidado.Controllers
         }
         [HttpPut]
         [Route("eliminar")]
-        public IActionResult Editar(int DocMujeres)
+        public IActionResult Editar(int codigoServ)
         {
             try
             {
                 using (var conexion = new SqlConnection(cadenaSql))
                 {
                     conexion.Open();
-                    var cmd = new SqlCommand("sp_eliminarMujeres", conexion);
+                    var cmd = new SqlCommand("sp_eliminarServicios", conexion);
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("codigoMunc", DocMujeres);
+                    cmd.Parameters.AddWithValue("codigoServ", codigoServ);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.ExecuteNonQuery();
                 }
-                return StatusCode(StatusCodes.Status200OK, new { mensaje = "El usuario ha sido eliminado" });
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = "El servicio ha sido actualizado" });
             }
             catch (Exception error)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = error.Message });
             }
         }
-
-    
     }
 }

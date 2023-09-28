@@ -144,7 +144,7 @@ namespace ManzanasDelCuidado.Controllers
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.ExecuteNonQuery();
                 }
-                return StatusCode(StatusCodes.Status200OK, new { mensaje = "El municipio ha sido actualizado" });
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = "El municipio ha sido eliminado" });
             }
             catch (Exception error)
             {

@@ -1,10 +1,9 @@
 ﻿namespace ManzanasDelCuidado.Modelos
 {
+    //creamos las clase Administrador 
     public class Administrador
     {
-        public int codigoAdmin { get; set; }
-        public string nombres { get; set; }
-        public string apellidos { get; set; }
+        //atributos de la clase Administrador con sus descriptores de acceso get y set
         public string correo { get; set; }
         public string contraseña { get; set; }
     }

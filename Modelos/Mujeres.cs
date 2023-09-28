@@ -1,7 +1,9 @@
 ﻿namespace ManzanasDelCuidado.Modelos
 {
+   //creamos las clase Mujeres 
     public class Mujeres
     {
+        //atributos de la clase Mujeres con sus descriptores de acceso get y set
         public int DocMujeres { get; set; }
 
         public string nombres { get; set; }
