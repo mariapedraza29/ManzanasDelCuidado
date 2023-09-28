@@ -38,7 +38,7 @@ namespace ManzanasDelCuidado.Controllers
                                 codigoManz = Convert.ToInt32(rd["codigoManz"]),
                                 nombre = rd["nombre"].ToString(),
                                 localidad = rd["localidad"].ToString(),
-                                direccion = rd["correo"].ToString(),
+                                direccion = rd["direccion"].ToString(),
                                 fkCodigoMunc = Convert.ToInt32(rd["fkCodigoMunc"])
 
                             });
@@ -55,7 +55,7 @@ namespace ManzanasDelCuidado.Controllers
             }
         }
         [HttpGet]
-        [Route("Obtener/{DocMujeres:int}")]
+        [Route("Obtener/{codigoManz:int}")]
         public IActionResult obtener(int codigoManz)
         {
             List<Manzanas> lista = new List<Manzanas>();
@@ -104,11 +104,11 @@ namespace ManzanasDelCuidado.Controllers
                     conexion.Open();
                     var cmd = new SqlCommand("sp_registrarManzanas", conexion);
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("codigoMunc", objeto.codigoManz);
-                    cmd.Parameters.AddWithValue("nombres", objeto.nombre);
-                    cmd.Parameters.AddWithValue("apellidos", objeto.localidad);
-                    cmd.Parameters.AddWithValue("correo", objeto.direccion);
-                    cmd.Parameters.AddWithValue("foto", objeto.fkCodigoMunc);
+                    cmd.Parameters.AddWithValue("codigoManz", objeto.codigoManz);
+                    cmd.Parameters.AddWithValue("nombre", objeto.nombre);
+                    cmd.Parameters.AddWithValue("localidad", objeto.localidad);
+                    cmd.Parameters.AddWithValue("direccion", objeto.direccion);
+                    cmd.Parameters.AddWithValue("fkCodigoMunc", objeto.fkCodigoMunc);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.ExecuteNonQuery();
                 }
@@ -130,11 +130,11 @@ namespace ManzanasDelCuidado.Controllers
                     conexion.Open();
                     var cmd = new SqlCommand("sp_actualizarManzanas", conexion);
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("codigoMunc", objeto.codigoManz == 0 ? DBNull.Value : objeto.codigoManz);
-                    cmd.Parameters.AddWithValue("nombres", objeto.nombre is null ? DBNull.Value : objeto.nombre);
-                    cmd.Parameters.AddWithValue("apellidos", objeto.localidad is null ? DBNull.Value : objeto.localidad);
-                    cmd.Parameters.AddWithValue("correo", objeto.direccion is null ? DBNull.Value : objeto.direccion);
-                    cmd.Parameters.AddWithValue("ocupacion", objeto.fkCodigoMunc == 0 ? DBNull.Value : objeto.fkCodigoMunc);
+                    cmd.Parameters.AddWithValue("codigoManz", objeto.codigoManz == 0 ? DBNull.Value : objeto.codigoManz);
+                    cmd.Parameters.AddWithValue("nombre", objeto.nombre is null ? DBNull.Value : objeto.nombre);
+                    cmd.Parameters.AddWithValue("localidad", objeto.localidad is null ? DBNull.Value : objeto.localidad);
+                    cmd.Parameters.AddWithValue("direccion", objeto.direccion is null ? DBNull.Value : objeto.direccion);
+                    cmd.Parameters.AddWithValue("fkCodigoMunc", objeto.fkCodigoMunc == 0 ? DBNull.Value : objeto.fkCodigoMunc);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.ExecuteNonQuery();
                 }
@@ -147,7 +147,7 @@ namespace ManzanasDelCuidado.Controllers
         }
         [HttpPut]
         [Route("eliminar")]
-        public IActionResult Editar(int codigoManz)
+        public IActionResult Eliminar(int codigoManz)
         {
             try
             {
@@ -156,7 +156,7 @@ namespace ManzanasDelCuidado.Controllers
                     conexion.Open();
                     var cmd = new SqlCommand("sp_eliminarManzanas", conexion);
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("codigoMunc", codigoManz);
+                    cmd.Parameters.AddWithValue("codigoManz", codigoManz);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.ExecuteNonQuery();
                 }
